@@ -1,8 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { CircularProgress, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../../components/Layout";
+import Image from "next/image";
 
 const Query = gql`
   query ($id: ID!) {
@@ -36,8 +37,12 @@ const Query = gql`
 export default function SingleMission() {
   const router = useRouter();
   const { id } = router.query;
-  const { data, loading, error } = useQuery(Query, { variables: { id: id } });
-  console.log(data);
+  const { data, loading, error, refetch } = useQuery(Query, {
+    variables: { id: id },
+  });
+  useEffect(() => {
+    refetch({ id: id });
+  }, [id]);
   if (loading) {
     return (
       <div
@@ -56,18 +61,24 @@ export default function SingleMission() {
   return (
     <div>
       <Typography variant="h2">{data?.launch?.mission_name}</Typography>
-      <img
-        src={data?.launch.links.flickr_images[0]}
-        style={{ width: "100%", height: 400, objectFit: "cover" }}
-      ></img>
-      <Typography variant="h6">
-        Rocket Type
-        {` `}
+      {data?.launch?.links?.flickr_images[0] ? (
+        <Image
+          alt="image of the ship"
+          src={data?.launch?.links?.flickr_images[0]}
+          layout="responsive"
+          width="300px"
+          height="400px"
+          objectFit="cover"
+        />
+      ) : (
+        ""
+      )}
+      <Typography variant="h3">
         {data?.launch?.rocket.rocket_type}
         {` `}
         {data?.launch?.rocket.rocket_name}
       </Typography>
-      <Typography variant="h6">
+      <Typography variant="p1">
         {data?.launch?.rocket.rocket.description}
       </Typography>
     </div>

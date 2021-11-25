@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
+import React from "react";
 import Launch from "../components/Launch";
 import Layout from "../components/Layout";
 
@@ -48,10 +49,9 @@ export default function Home() {
           return null;
         }
         return (
-          <Grid item sm="6">
+          <Grid item sm="6" key={launch?.id}>
             <Launch
               id={launch?.id}
-              key={launch?.id}
               name={launch?.mission_name}
               details={launch?.details}
               images={launch?.links?.flickr_images}
